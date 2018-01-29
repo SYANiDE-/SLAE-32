@@ -1,0 +1,13 @@
+#!/bin/bash
+
+NARGS=$#
+if [[ $NARGS -ne 1 ]]; then
+	echo "USAGE: $0 [.nasm file]"
+	exit 1
+fi
+node=${1##.}
+
+echo -ne "[.] Assembling:\t$node.nasm\t-->\t$node.o\t"
+nasm -f elf32 $node.nasm -o $node.o && echo -e "[.] Done!"
+echo -ne "[.] Linking:\t$node.o\t-->\t$node.elf\t"
+ld $node.o -o $node.elf && echo -e "[.] Done!"
