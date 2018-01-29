@@ -1,14 +1,23 @@
 #!/bin/bash
 
 NARGS=$#
-if [[ $NARGS -ne 1 ]]; then
+if [[ $NARGS -lt 1 ]]; then
 	echo "USAGE: $0 [.nasm file]"
 	exit 1
+else
+	node=${1%.*}
 fi
-node=${1%.*}
 
+function tab(){
+	printf "[.] %13s: %25s --> %-25s " $1 $2 $3
+}
 
-echo -ne "[.] Assembling:\t$node.nasm\t-->\t$node.o\t"
-nasm -f elf32 $node.nasm -o $node.o && echo -e "[.] Done!"
-echo -ne "[.] Linking:\t$node.o\t-->\t$node.elf\t"
-ld $node.o -o $node.elf && echo -e "[.] Done!"
+tab "Assembling" "$node.nasm" "$node.o"
+nasm -f elf32 -g $node.nasm -o $node.o && echo -e "... Done!"
+tab "Linking" "$node.o" "$node.elf"
+ld $node.o -o $node.elf && echo -e "... Done!"
+tab 'Debug_symbols' "$node.elf" "$node.dbg"
+objcopy --only-keep-debug $node.elf $node.dbg && chmod -x $node.dbg && echo "... Done!"
+tab 'Strip_Debug' "$node.elf" "-$node.elf"
+strip --strip-debug --strip-unneeded $node.elf && echo "... Done!"
+
