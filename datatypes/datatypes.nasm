@@ -17,8 +17,16 @@ _start:
 	mov ebx, 0x0
 	int 0x80
 
+
 section .data
-	spatula_text db "I am a spatula.  Time to spat!", 0x0a
+	vara:		db 0xaa
+	varb:		db 0xbb, 0xcc, 0xdd
+	varc:		dw 0xee
+	vard:		dd 0xaabbccdd
+	vare:		dd 0x112233
+	varf:		TIMES 6 db 0xff
+
+	spatula_text dd "I am a spatula.  Time to spat!", 0x0a
 	spa_tex_len equ $-spatula_text
 
 
