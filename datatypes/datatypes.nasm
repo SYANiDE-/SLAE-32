@@ -26,7 +26,11 @@ section .data
 	vare:		dd 0x112233
 	varf:		TIMES 6 db 0xff
 
-	spatula_text dd "I am a spatula.  Time to spat!", 0x0a
+	spatula_text: dd "I am a spatula.  Time to spat!", 0x0a
 	spa_tex_len equ $-spatula_text
+
+section .bss
+	varg:		resb 100
+	varh:		resw 20
 
 
