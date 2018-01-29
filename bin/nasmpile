@@ -5,7 +5,8 @@ if [[ $NARGS -ne 1 ]]; then
 	echo "USAGE: $0 [.nasm file]"
 	exit 1
 fi
-node=${1##.}
+node=${1%.*}
+
 
 echo -ne "[.] Assembling:\t$node.nasm\t-->\t$node.o\t"
 nasm -f elf32 $node.nasm -o $node.o && echo -e "[.] Done!"
