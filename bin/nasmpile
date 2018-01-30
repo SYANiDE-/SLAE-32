@@ -1,23 +1,33 @@
 #!/bin/bash
 
 NARGS=$#
+dbg=""
+dt=""
+clean=0
 if [[ $NARGS -lt 1 ]]; then
-	echo "USAGE: $0 [.nasm file]"
+	echo "USAGE: $0 [.nasm file] {[DEBUG|debug] ||  [clean]}"
+	echo -e "\toptional: add debug (-g) and further optional strip (-s)"
 	exit 1
 else
 	node=${1%.*}
 fi
 
-function tab(){
-	printf "[.] %13s: %25s --> %-25s " $1 $2 $3
-}
+function tab(){ printf "[.] %13s: %25s --> %-25s " $1 $2 $3 ; }
 
+if [[ "$2" == "-g" ]] || [[ "$3" == '-g' ]]; then dbg='-g'; dt='w/debug'; fi
+if [[ "$2" == '-s' ]] || [[ "$3" == '-s' ]]; then clean=1; fi
+
+if [[ "$dbg" == '-g' ]]; then echo "[!] $dt"; fi
 tab "Assembling" "$node.nasm" "$node.o"
-nasm -f elf32 -g $node.nasm -o $node.o && echo -e "... Done!"
+nasm -f elf32 $node.nasm -o $node.o $dbg && echo -e "... Done!"
 tab "Linking" "$node.o" "$node.elf"
 ld $node.o -o $node.elf && echo -e "... Done!"
-tab 'Debug_symbols' "$node.elf" "$node.dbg"
-objcopy --only-keep-debug $node.elf $node.dbg && chmod -x $node.dbg && echo "... Done!"
-tab 'Strip_Debug' "$node.elf" "-$node.elf"
-strip --strip-debug --strip-unneeded $node.elf && echo "... Done!"
+
+if [[ "$dbg" == '-g' ]] && [[ "$clean" -eq 1 ]]; then
+	tab 'Debug_symbols' "$node.elf" "$node.dbg"
+	objcopy --only-keep-debug $node.elf $node.dbg && chmod -x $node.dbg && echo "... Done!"
+	tab 'Strip_Debug' "$node.elf" "-$node.elf"
+	strip --strip-debug --strip-unneeded $node.elf && echo "... Done!"
+fi
+
 

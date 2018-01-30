@@ -1,0 +1,13 @@
+define hook-stop
+x/4xw $esp
+x/32xb $eip
+end
+display /x $ebp
+display /x $esp
+display /x $edi
+display /x $esi
+display /x $edx
+display /x $ecx
+display /x $ebx
+display /x $eax
+
