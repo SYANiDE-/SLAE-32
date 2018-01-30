@@ -1,0 +1,11 @@
+define hook-stop
+print/x $eax
+x/xb &var1
+x/xh &var2
+x/xw &var3
+print $eflags
+x/4xw $esp
+x/32xb $eip
+disass $eip,+10
+end
+
