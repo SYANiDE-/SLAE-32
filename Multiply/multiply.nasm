@@ -24,6 +24,15 @@ _start:
 	; echo "ibase=10; obase=16; 196299" |bc
 	; 2FECB
 	mul bx
+	
+	; unsigned r/m32 multiplication
+	mov eax, 0x0
+	mov ebx, 0x0
+	mov ecx, 0x0
+	mov edx, 0x0
+	mov eax, 0xffffffff
+	mov ebx, 0x3
+	mul ebx
 
 	; got to get you some exit.  Clean, like...
 	mov eax, 0x1
