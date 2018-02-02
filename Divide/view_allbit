@@ -1,0 +1,22 @@
+define hook-stop
+print/x $al
+print/x $ah
+print/x $bl
+print/x $bh
+print/x $cl
+print/x $ch
+print/x $dl
+print/x $dh
+print/x $ax
+print/x $bx
+print/x $cx
+print/x $dx
+print/x $eax
+print/x $ebx
+print/x $ecx
+print/x $edx
+print $eflags
+disassemble $eip,+10
+end
+break _start
+run
