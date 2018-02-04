@@ -1,0 +1,10 @@
+define hook-stop
+print/x $eax
+print/x $ebx
+print/x $ecx
+print/x $edx
+print $eflags
+print/d ($eax - $edx)-1
+disassemble $eip,+10
+end
+
