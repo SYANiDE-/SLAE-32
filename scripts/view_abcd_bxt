@@ -1,0 +1,22 @@
+define hook-stop
+printf "$eax = 0x%x\n", $eax
+printf "$ebx = 0x%x\n", $ebx
+printf "$ecx = 0x%x\n", $ecx
+printf "$edx = 0x%x\n", $edx
+print $eflags
+printf "print/d $eax = %d\n", $eax
+printf "print/x $eax = 0x%x\n", $eax
+print/t $eax
+printf "print/d $ebx = %d\n", $ebx
+printf "print/x $ebx = 0x%x\n", $ebx
+print/t $ebx
+printf "print/d $ecx = %d\n", $ecx
+printf "print/x $ecx = 0x%x\n", $ecx
+print/t $ecx
+printf "print/d $edx = %d\n", $edx
+printf "print/x $edx = 0x%x\n", $edx
+print/t $edx
+disassemble $eip,+10
+x/3xw $esp
+end
+
