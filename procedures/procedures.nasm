@@ -6,7 +6,7 @@ section .text
 global _start
 
 Printer:
-	mov eax, 0x4			;write(stdout, str, len)  SYSCALL
+	mov eax, 0x4			;EAX(write(EBX(stdout), ECX(str), EDX(len)))  SYSCALL
 	mov ebx, 0x1			;stdout fd
 	;mov ecx, <whatever item>	;handled by calling procedure
 	;mov edx, <item len>		;handled by calling procedure
@@ -14,10 +14,7 @@ Printer:
 	ret				;return from procedure "Printer"
 
 PrintCounter:
-	mov ecx, 0x0			;zero ecx counter register
-	mov ecx, [Counter]		;move memory contents of Counter to ecx
-	inc ecx				;increment ecx
-	mov [Counter], ecx		;move ecx to memory contents of Counter
+	inc byte [Counter]		;increment the Counter!
 	mov ecx, Counter
 	mov edx, CounterLen
 	call Printer
