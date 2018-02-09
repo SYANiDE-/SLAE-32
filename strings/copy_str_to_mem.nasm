@@ -1,4 +1,4 @@
-; compare1.nasm
+; copy_str_to_mem.nasm
 ; Author: Chase Hatch
 
 

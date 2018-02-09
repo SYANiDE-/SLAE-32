@@ -1,4 +1,4 @@
-; compare.nasm
+; scas.nasm
 ; Author: Chase Hatch
 
 
@@ -52,24 +52,36 @@ _start:
 	popad
 	;call Exiter
 
-	; now we'll compare two strings.
+	; this is a mind bender section.
+	; now we'll search for substring in string
 	mov ecx, HWStrLen
-	lea esi, [HWStr]
-	lea edi, [FakeStr]
-	repe	cmpsb			;repeat while equal, compare bytes until not equal
+	cld
+	mov al, [Substring1]
+	lea di, [HWStr]
+	repne	scasb			;repeat while equal, compare bytes until not equal
+	
+	;;;, compares two bytes by subtracting the destination byte, pointed to by ES:DI
+	;;;, from AL.  Obviously, if the bytes are equal, the result will be zero.
 
-	;determine whether strings are equal or not and print
-	jz SetE				;jump to SetE if zero (equal based on last operation)	
-	jnz SetNE			;jump to SetNE if not zero (not equal based on last operation)
+
+
+
+
+	;determine whether substring is in string and jump to print status procedure
+	je SetE				;jump to SetE if equal (equal based on last operation, which is find)	
+	jne SetNE			;jump to SetNE if not equal (not equal based on last operation, which is find)
 
 
 section .data
 	HWStr		db	"Hello ASM World!", 0x0a
 	HWStrLen	equ	$-HWStr
-	FakeStr		db	"Hello ASN World!", 0x0a	;ASN not same as ASM
-	StatStr1	db	"Strings are the same", 0x0a
+	Substring1	db	"M"	
+	Substring2	db	"X"
+	Substring1Len	equ	$-Substring1	
+	Substring2Len	equ	$-Substring2
+	StatStr1	db	"Substring found in string!", 0x0a
 	StatStr1Len	equ	$-StatStr1
-	StatStr2	db	"Strings differ", 0x0a
+	StatStr2	db	"Substring NOT found in string!", 0x0a
 	StatStr2Len	equ	$-StatStr2
 
 

@@ -1,4 +1,5 @@
-; compare.nasm
+; lods.nasm
+; which basically builds on scas.nasm
 ; Author: Chase Hatch
 
 
@@ -52,24 +53,32 @@ _start:
 	popad
 	;call Exiter
 
-	; now we'll compare two strings.
+	; move the other substring to AX or AL
+	mov ecx, Substring2Len
+	cld
+	lea si, [Substring2]
+	lodsb
+	
+	; do the comparison again
 	mov ecx, HWStrLen
-	lea esi, [HWStr]
-	lea edi, [FakeStr]
-	repe	cmpsb			;repeat while equal, compare bytes until not equal
-
-	;determine whether strings are equal or not and print
-	jz SetE				;jump to SetE if zero (equal based on last operation)	
-	jnz SetNE			;jump to SetNE if not zero (not equal based on last operation)
+	cld
+	; mov al, [Substring2]
+	lea di, [HWStr]
+	repne	scasb
+	je SetE	
+	jne SetNE
 
 
 section .data
 	HWStr		db	"Hello ASM World!", 0x0a
 	HWStrLen	equ	$-HWStr
-	FakeStr		db	"Hello ASN World!", 0x0a	;ASN not same as ASM
-	StatStr1	db	"Strings are the same", 0x0a
+	Substring1	db	"M"	
+	Substring2	db	"X"
+	Substring1Len	equ	$-Substring1	
+	Substring2Len	equ	$-Substring2
+	StatStr1	db	"Substring found in string!", 0x0a
 	StatStr1Len	equ	$-StatStr1
-	StatStr2	db	"Strings differ", 0x0a
+	StatStr2	db	"Substring NOT found in string!", 0x0a
 	StatStr2Len	equ	$-StatStr2
 
 
