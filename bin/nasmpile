@@ -3,25 +3,49 @@
 NARGS=$#
 dbg=""
 dt=""
-clean=0
-if [[ $NARGS -lt 1 ]]; then
-	echo "USAGE: $0 [.nasm file] {[DEBUG|debug] ||  [clean]}"
-	echo -e "\toptional: add debug (-g) and further optional strip (-s)"
-	exit 1
-else
-	node=${1%.*}
-fi
+compiler_opts=""
+linker_opts=""
+clean=0		#default
+linker="ld"	#default
+helptext='''[!] USAGE: '''"$0"'''  [.nasm file]  -{o|O|g|ll|lg|s}
 
+Opts:
+	-o [?]	Compiler options. Where [?] is a quoted list of raw opts to pass.
+	-O [?]	Linker options.  Where [?] is a quoted list of raw opts to pass.
+	-g	Sets add-debug-symbols mode = 1 on NASM op.
+	-ll	Set linker to ld  [default]
+	-lg	Set linker to gcc
+	-s	Set output debug symbols to .dbg file and strip binary
+	-h	Usage and help
+	--help	Usage and help
+'''
+
+if [[ $NARGS -lt 1 ]]; then echo -e "$helptext"; exit 1; else node=${1%.*}; fi
 function tab(){ printf "[.] %13s: %25s --> %-25s " $1 $2 $3 ; }
 
-if [[ "$2" == "-g" ]] || [[ "$3" == '-g' ]]; then dbg='-g'; dt='w/debug'; fi
-if [[ "$2" == '-s' ]] || [[ "$3" == '-s' ]]; then clean=1; fi
+while [[ $# -gt 0 ]];
+do
+	opt="$1";
+	shift;
+	case "$opt" in
+		'-o') compiler_opts="$1";;
+		'-O') linker_opts="$1";;
+		'-g') dbg='-g'; dt='w/debug';;
+		'-ll') linker="ld";;
+		'-lg') linker="gcc";;
+		'-s') clean=1;;
+		'-h'|'--help') echo "$helptext"; exit 1;;
+esac
+done
 
+
+
+echo -ne "Compiler opts = \"$compiler_opts\"\nLinker_opts = \"$linker_opts\"\nLinker = \"$linker\"\n\n"
 if [[ "$dbg" == '-g' ]]; then echo "[!] $dt"; fi
 tab "Assembling" "$node.nasm" "$node.o"
-nasm -f elf32 $node.nasm -o $node.o $dbg && echo -e "... Done!"
+nasm -f elf32 $node.nasm -o $node.o $dbg $compiler_opts && echo -e "... Done!"
 tab "Linking" "$node.o" "$node.elf"
-ld $node.o -o $node.elf && echo -e "... Done!"
+$linker $node.o -o $node.elf $linker_opts && echo -e "... Done!"
 
 if [[ "$dbg" == '-g' ]] && [[ "$clean" -eq 1 ]]; then
 	tab 'Debug_symbols' "$node.elf" "$node.dbg"
