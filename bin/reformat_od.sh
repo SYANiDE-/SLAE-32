@@ -53,7 +53,7 @@ bytecount=$(( ${#shellcode} / 4 ))
 
 echo -e "\n###"
 echo -ne "#  "
-printf "%s" $shellcode
+printf "\"%s\"" $shellcode
 echo -e "  # $bytecount bytes"
 echo -e "###"
 
