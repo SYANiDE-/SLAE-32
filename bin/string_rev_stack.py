@@ -60,7 +60,7 @@ def main():
 			print('\b%s' % ('90'*k)),
 		this = this[REG_LEN:]
 		i+=REG_LEN
-	print("\n# %s bytes" % that)
+	print("\n# %s bytes (0x%08x)" % (that, that))
 
 
 if __name__=="__main__":

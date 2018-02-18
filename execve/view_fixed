@@ -1,0 +1,17 @@
+define hook-stop
+print/x $eax
+print/x $ebx
+print/x $ecx
+print/x $edx
+print/x $esi
+x/s $esi
+print/x $edi
+x/s $edi
+print $eflags
+disassemble $eip,+10
+x/8xw $esp
+end
+break _start
+run
+
+
