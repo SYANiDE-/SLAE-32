@@ -36,7 +36,6 @@ def ctrl_chars(a):
 	a=a.replace('625c', '08') # \b rev
 	return a
 	
-
 	
 def main():
 	# this = ''
@@ -50,17 +49,31 @@ def main():
 	that = len(this)/2
 	i = 0
 	j = len(this)
-	while i < j:
+	l = 0
+	slack = ((j/2) % (REG_LEN / 2))
+	SZ = REG_LEN if slack == 0 else slack*2
+	while i < j:	
 		if not (i == 0):
 			print("")
-		print("push 0x%s" % this[:REG_LEN]),
-		if (j - i) < REG_LEN and args.nopsled == True:
-			k = (REG_LEN - (j - i))/2 
-			that += k
-			print('\b%s' % ('90'*k)),
-		this = this[REG_LEN:]
-		i+=REG_LEN
-	print("\n# %s bytes (0x%08x)" % (that, that))
+		print("push 0x"),
+		if slack != 0:
+			if args.nopsled == True:
+				print("\b%s" % ("90" * ((REG_LEN/2) - slack))),
+		print("\b%s" % this[:SZ]),
+		l = 0
+		if slack != 0 and args.nopsled == False:
+			print("\t"),
+		print("\t;  "),
+		while l < SZ  and l < j:
+		 	print("\b%c" % int(this[l:l+2], 16)),
+		 	l+=2
+		this = this[SZ:]
+		i+=SZ
+		if slack !=0:
+			j = len(this)
+			slack = 0
+			SZ = REG_LEN
+	print("\n# %s bytes (0x%x)" % (that, that))
 
 
 if __name__=="__main__":
