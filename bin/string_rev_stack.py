@@ -8,6 +8,8 @@ def getargs():
 	ap.add_argument("-x", "--hex", type=str, default=None, help='HEX byte string (\x79)')
 	ap.add_argument("-n", "--nopsled", action='store_true', default=None, help='NOPSLED any short of modulo 4 bytes')
 	ap.add_argument("-X", "--x64", action='store_true', default=None, help='x64-bit register sizes')
+	ap.add_argument("-m", "--mov", action='store_true', default=None, help='mov templated instructions instead of push')
+	ap.add_argument("-b", "--blank", action='store_true', default=None, help='suppress instructions and just print in dwords')
 	args, l = ap.parse_known_args()
 	if args.ascii == None and args.hex == None:
 		ap.print_help()
@@ -40,6 +42,8 @@ def ctrl_chars(a):
 def main():
 	# this = ''
 	args = getargs()
+	ITER=0
+	ITER_SZ=8 if args.x64 else 4
 	REG_LEN = 16 if args.x64 else 8
 	if args.ascii != None:
 		this = args.ascii[::-1].encode('hex')
@@ -51,17 +55,27 @@ def main():
 	j = len(this)
 	l = 0
 	slack = ((j/2) % (REG_LEN / 2))
+	if slack > 0:
+		ITER = ((((j/2) + slack) / (REG_LEN / 2)) * ITER_SZ) - ITER_SZ
+	else:
+		ITER = (((j/2) / (REG_LEN / 2)) * ITER_SZ) - ITER_SZ 
+	if slack == 1:
+		ITER+=ITER_SZ
 	SZ = REG_LEN if slack == 0 else slack*2
 	while i < j:	
 		if not (i == 0):
 			print("")
-		print("push 0x"),
+		if not args.blank:
+			if args.mov:
+				print("mov dword [esp+%d], 0x" % ITER),
+			else:
+				print("push 0x"),
 		if slack != 0:
 			if args.nopsled == True:
 				print("\b%s" % ("90" * ((REG_LEN/2) - slack))),
 		print("\b%s" % this[:SZ]),
 		l = 0
-		if slack != 0 and args.nopsled == False:
+		if slack != 0 and args.nopsled == None and args.mov == None:
 			print("\t"),
 		print("\t;  "),
 		while l < SZ  and l < j:
@@ -73,6 +87,7 @@ def main():
 			j = len(this)
 			slack = 0
 			SZ = REG_LEN
+		ITER-=ITER_SZ
 	print("\n# %s bytes (0x%x)" % (that, that))
 
 

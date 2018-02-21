@@ -28,6 +28,8 @@ if [[ -p /dev/stdin ]]; then
 			-e 's/^.*/\\x&/g' \
 			-e 's/\ /\\x/g')
 	done
+	tmp=$(echo "$shellcode" |sed 's/\\x\\x/\\x/g')
+	shellcode=$tmp
 else
 	if [[ $# -ge 1 ]]; then echo -e "$helptxt"; exit 1; fi
 	echo -e "[!] Enter multiline objdump opcode output (-d) here."
@@ -46,7 +48,8 @@ else
 		sc="${sc:2}"
 		let i=(i+2)
 	done
-	shellcode="$tmp"
+	cleaned=$(echo "$tmp" |sed 's/\\x\\x/\\x/g')
+	shellcode="$cleaned"
 fi
 
 bytecount=$(( ${#shellcode} / 4 ))
