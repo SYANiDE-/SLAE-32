@@ -20,16 +20,22 @@ def Argv_Bytestr(param):
 
 
 def possible_encoder_bytes(param):
+	used_bytes = ["%02x" % b for b in bytearray(param)]
 	all_bytes = ["%02x" % x for x in range(1,256)]
-	for b in bytearray(param):
-		if ("%02x" % b) in all_bytes:
-			all_bytes.remove( ("%02x" % b) )
-		if "00" in ("%02x" % b):
-			print("\n[!] [!] [!] NULL BYTE detected in input! [!] [!] [!]\n")
-	all_byte_len = len(all_bytes)
+	potential_bytes = [x for x in all_bytes if x not in used_bytes]
+	common_bad_bytes = ['00', '0a', '0d']
+	if "00" in used_bytes:
+		print("\n[!] [!] [!] NULL BYTE detected in input! [!] [!] [!]\n")
+	potential_byte_len = len(potential_bytes)
+	used_bytes = sorted(set(used_bytes))
+	poten_used_bad = [x for x in used_bytes if x in common_bad_bytes]
 	if argc == 2:
-		print("[#] Potential encoder bytes: [#]\n%s" % all_bytes)
-		print("[#] %d possible bytes / (\\x01 - \\xff) [#]" % all_byte_len)
+		print("[#] Used bytes:\n%s" % ",".join(used_bytes))
+		if len(poten_used_bad) > 0:
+			print("\n[!] WARN: Possible bad bytes in input!\n%s\n" 
+				% ','.join(poten_used_bad))
+		print("[#] Potential encoder bytes:\n%s" % ",".join(potential_bytes))
+		print("[#] %d possible bytes / (\\x01 - \\xff)" % potential_byte_len)
 
 
 def xor_encode(param, a):
@@ -53,11 +59,11 @@ def main():
 	if argc > 2:
 		encoder_byte = Argv_Bytestr(sys.argv[2])
 		c, z = xor_encode(shellcode, encoder_byte)
-		print("[#] C-style: [#]\n\"%s\"" % c)
-		print("[#] Zero-style: [#]\n%s" % z)
+		print("[#] C-style:\n\"%s\"" % c)
+		print("[#] Zero-style:\n%s" % z)
 	else:
 		possible_encoder_bytes(shellcode)
-	print("[#] shellcode strlen %d bytes (0x%x) [#]" % (s_len, s_len))
+	print("[#] shellcode strlen %d bytes (0x%x)" % (s_len, s_len))
 
 
 if __name__=="__main__":
