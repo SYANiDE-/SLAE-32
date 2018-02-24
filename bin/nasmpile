@@ -7,6 +7,7 @@ compiler_opts=""
 linker_opts=""
 clean=0		#default
 linker="ld"	#default
+arch=""
 helptext='''[!] USAGE: '''"$0"'''  [.nasm file]  -{o|O|g|ll|lg|s}
 
 Opts:
@@ -17,6 +18,7 @@ Opts:
 	-lg	Set linker to gcc
 	-s	Set output debug symbols to .dbg file and strip binary
 	-h	Usage and help
+	-x86	Force 32-bit linker on 64-bit machine
 	--help	Usage and help
 '''
 
@@ -34,6 +36,7 @@ do
 		'-ll') linker="ld";;
 		'-lg') linker="gcc";;
 		'-s') clean=1;;
+		'-x86') arch="-m elf_i386";;
 		'-h'|'--help') echo "$helptext"; exit 1;;
 esac
 done
@@ -45,7 +48,7 @@ if [[ "$dbg" == '-g' ]]; then echo "[!] $dt"; fi
 tab "Assembling" "$node.nasm" "$node.o"
 nasm -f elf32 $node.nasm -o $node.o $dbg $compiler_opts && echo -e "... Done!"
 tab "Linking" "$node.o" "$node.elf"
-$linker $node.o -o $node.elf $linker_opts && echo -e "... Done!"
+$linker $node.o -o $node.elf $linker_opts $arch && echo -e "... Done!"
 
 if [[ "$dbg" == '-g' ]] && [[ "$clean" -eq 1 ]]; then
 	tab 'Debug_symbols' "$node.elf" "$node.dbg"
