@@ -136,6 +136,7 @@ _start:
 		with open(FILE, 'w') as F:
 			for line in s.output:
 				F.write(line)
+		s.outfile = FILE
 		F.close()
 		
 			
