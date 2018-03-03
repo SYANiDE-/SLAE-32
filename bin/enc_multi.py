@@ -33,9 +33,9 @@ class encoder():
 		ap = argparse.ArgumentParser(
 			description="Multi-encoder for argv-supplied shellcode bytestrings")
 		ap.add_argument("-n", '--NOT', type=str, default=None, 
-			help="INSERTION-encode bytestring")	
-		ap.add_argument("-i", '--insert', type=str, default=None, 
 			help="NOT-encode bytestring")	
+		ap.add_argument("-i", '--insert', type=str, default=None, 
+			help="INSERTION-encode bytestring")	
 		ap.add_argument("-x", '--xor', type=str, default=None, 
 			help="XOR-encode bytestring")	
 		ap.add_argument("-eb", '--encbyte', type=str, default=None, 
