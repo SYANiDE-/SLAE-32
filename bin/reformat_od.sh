@@ -10,7 +10,7 @@ i=0
 j=0
 tmp=""
 shellcode=""
-helptxt="""\
+helptext="""\
 Reformats objdump opcodes output, painlessly, heredoc-style or piped inputs.
 [!] USAGE: $0 [-o|-h|--help]
 
