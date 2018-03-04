@@ -1,9 +1,10 @@
 #!/usr/bin/env python2
-import os, sys, argparse
+import os, sys, argparse, binascii
 
 
 def getargs():
 	ap = argparse.ArgumentParser(description="Reverse strings in various formats, ready for push to stack")
+	ap.add_argument("-i", "--ipp", type=str, default=None, help='String is IP:PORT')
 	ap.add_argument("-a", "--ascii", type=str, default=None, help='ASCII input string')
 	ap.add_argument("-x", "--hex", type=str, default=None, help='HEX byte string (\x79)')
 	ap.add_argument("-n", "--nopsled", action='store_true', default=None, help='NOPSLED any short of modulo 4 bytes')
@@ -11,7 +12,7 @@ def getargs():
 	ap.add_argument("-m", "--mov", action='store_true', default=None, help='mov templated instructions instead of push')
 	ap.add_argument("-b", "--blank", action='store_true', default=None, help='suppress instructions and just print in dwords')
 	args, l = ap.parse_known_args()
-	if args.ascii == None and args.hex == None:
+	if args.ascii == None and args.hex == None and args.ipp == None:
 		ap.print_help()
 		sys.exit()
 	else:
@@ -37,7 +38,39 @@ def ctrl_chars(a):
 	a=a.replace('725c', '0d') # \r rev
 	a=a.replace('625c', '08') # \b rev
 	return a
-	
+
+
+def ip_port(a):
+	tmp = []
+	if len(a) >= 6:
+		ip = ''.join(a).split(":")[0]
+		tmp = ''.join(ip).split(".")
+		port = (a).split(":")[1]
+		# tmp.insert(0, port)
+		tmp.append(port)
+	else:
+		tmp.append(a)
+	tmp = ["%02x" % int(x) for x in tmp]
+	tmp = tmp[::-1]
+	for x in range(0, len(tmp)):
+		temp = tmp[x]
+		if not len(temp) % 2 == 0:
+			temp = "0" + temp
+			tmp[x] = temp
+			tmp[x] = temp[2:] + temp[0:2] 
+	return(''.join(tmp))
+
+
+def ip_port_prn(args, i):
+	ip_prn = len(args.ipp)
+	if ip_prn > 0:
+		if ip_prn > 6 and i == 0:
+			print("\t\t; PORT: %s" % args.ipp.split(":")[1]),
+		if ip_prn > 6 and i != 0:
+			print("\t; IP: %s" % args.ipp.split(":")[0]),
+		if ip_prn < 6:
+			print("\t\t; PORT: %s" % args.ipp),
+
 	
 def main():
 	# this = ''
@@ -45,6 +78,8 @@ def main():
 	ITER=0
 	ITER_SZ=8 if args.x64 else 4
 	REG_LEN = 16 if args.x64 else 8
+	if args.ipp != None:
+		this = ip_port(args.ipp)	
 	if args.ascii != None:
 		this = args.ascii[::-1].encode('hex')
 	if args.hex != None:
@@ -82,6 +117,7 @@ def main():
 		 	print("\b%c" % int(this[l:l+2], 16)),
 		 	l+=2
 		this = this[SZ:]
+		ip_port_prn(args, i)
 		i+=SZ
 		if slack !=0:
 			j = len(this)
