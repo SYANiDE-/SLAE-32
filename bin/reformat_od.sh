@@ -9,11 +9,32 @@ preamble='\x'
 i=0
 j=0
 tmp=""
-helptxt="Reformats objdump opcodes output, painlessly, heredoc-style\n[!] USAGE: $0\n"
 shellcode=""
+helptxt="""\
+Reformats objdump opcodes output, painlessly, heredoc-style or piped inputs.
+[!] USAGE: $0 [-o|-h|--help]
+
+Opts:
+	-o	Output shellcode-only
+	-h	Help
+	--help	Help
+"""
+sc_only=0
+
+while [[ $# -gt 0 ]];
+do
+	opt="$1";
+	shift;
+	case "$opt" in
+		'-o') sc_only=1;;
+		'-h'|'--help') echo "$helptext"; exit 1;;
+esac
+done
 
 if [[ -p /dev/stdin ]]; then
-	echo "[!] Receiving pipe."
+	if [[ $sc_only -eq 0 ]]; then
+		echo "[!] Receiving pipe."
+	fi
 	while IFS= read line
 	do
 		if [[ $(echo $line |grep -E "[0-9a-f]{7}:") ]]; then
@@ -54,10 +75,15 @@ fi
 
 bytecount=$(( ${#shellcode} / 4 ))
 
-echo -e "\n###"
-echo -ne "#  "
-printf "\"%s\"" $shellcode
-echo -e "  # $bytecount bytes"
-echo -e "###"
+
+if [[ $sc_only -eq 1 ]]; then
+	printf "%s" $shellcode
+else
+	echo -e "\n###"
+	echo -ne "#  "
+	printf "\"%s\"" $shellcode
+	echo -e "  # $bytecount bytes"
+	echo -e "###"
+fi
 
 
