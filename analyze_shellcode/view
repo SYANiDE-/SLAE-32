@@ -1,0 +1,5 @@
+define hook-stop
+info registers
+disassemble
+x/32xw $esp
+end
