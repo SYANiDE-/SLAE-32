@@ -58,18 +58,20 @@ def ip_port(a):
 			temp = "0" + temp
 			tmp[x] = temp
 			tmp[x] = temp[2:] + temp[0:2] 
+	print("[!] Lines will probably be displayed in the opposite order than the order\nthey need to be pushed onto the stack! [!]")
 	return(''.join(tmp))
 
 
 def ip_port_prn(args, i):
-	ip_prn = len(args.ipp)
-	if ip_prn > 0:
-		if ip_prn > 6 and i == 0:
-			print("\t\t; PORT: %s" % args.ipp.split(":")[1]),
-		if ip_prn > 6 and i != 0:
-			print("\t; IP: %s" % args.ipp.split(":")[0]),
-		if ip_prn < 6:
-			print("\t\t; PORT: %s" % args.ipp),
+	if not args.ipp == None:
+		ip_prn = len(args.ipp)
+		if ip_prn > 0:
+			if ip_prn > 6 and i == 0:
+				print("\t\t; PORT: %s" % args.ipp.split(":")[1]),
+			if ip_prn > 6 and i != 0:
+				print("\t; IP: %s" % args.ipp.split(":")[0]),
+			if ip_prn < 6:
+				print("\t\t; PORT: %s" % args.ipp),
 
 	
 def main():

@@ -6,9 +6,8 @@ print/x $edx
 print/x $esi
 print/x $edi
 print $eflags
-disassemble $eip,+10
 x/12xw $esp
+disassemble $eip,+10
 end
 break _start
 run
-

