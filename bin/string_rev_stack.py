@@ -58,7 +58,12 @@ def ip_port(a):
 			temp = "0" + temp
 			tmp[x] = temp
 			tmp[x] = temp[2:] + temp[0:2] 
+	bytes_len = len(tmp)
+	if bytes_len == 5 or bytes_len == 1:
+		tmp[0] = str(tmp[0][2]) + str(tmp[0][3]) + str(tmp[0][0]) + str(tmp[0][1]) # reverse port bytes!
+	print(tmp)
 	print("[!] Lines will probably be displayed in the opposite order than the order\nthey need to be pushed onto the stack! [!]")
+	print("[!] The PUSH instruction for the port probably needs to be a PUSH WORD !")
 	return(''.join(tmp))
 
 
@@ -99,20 +104,29 @@ def main():
 	if slack == 1:
 		ITER+=ITER_SZ
 	SZ = REG_LEN if slack == 0 else slack*2
-	while i < j:	
+	if not args.x64:
+		mov_inst_word = ['dword', 'byte', 'word', 'BADSIZE']
+		push_inst_word = ['dword 0x', 'byte 0x', 'word 0x', 'BADSIZE 0x']
+	else:
+		mov_inst_word = ['qword', 'byte', 'word', 'BADSIZE', 'dword', 'BADSIZE', 'BADSIZE', 'BADSIZE']
+		push_inst_word = ['qword 0x', 'byte 0x', 'word 0x', 'BADSIZE 0x', 'dword 0x', 'BADSIZE 0x', 'BADSIZE 0x', 'BADSIZE 0x']
+	while i < j:
+		if not args.nopsled:
+			mov_inst = mov_inst_word[slack]
+			push_inst = push_inst_word[slack]
 		if not (i == 0):
 			print("")
 		if not args.blank:
 			if args.mov:
-				print("mov dword [esp+%d], 0x" % ITER),
+				print("mov %s [esp+%d], 0x" % (mov_inst, ITER)),
 			else:
-				print("push 0x"),
+				print("push %s" % push_inst),
 		if slack != 0:
 			if args.nopsled == True:
 				print("\b%s" % ("90" * ((REG_LEN/2) - slack))),
 		print("\b%s" % this[:SZ]),
 		l = 0
-		if slack != 0 and args.nopsled == None and args.mov == None:
+		if slack != 0 and args.nopsled == True and args.mov == None:
 			print("\t"),
 		print("\t;  "),
 		while l < SZ  and l < j:

