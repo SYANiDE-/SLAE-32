@@ -44,8 +44,10 @@ if [[ -p /dev/stdin ]]; then
 	let took_pipe=$(( $took_pipe + 1))
 else
 	if [[ $# -ge 1 ]]; then echo -e "$helptxt"; exit 1; fi
-	echo -e "[!] Enter quoted, multi-line shellcode (sans variable, '=', etc)."
-	echo -e "[!] Heredoc-stye. Stop input with line having only 'EOF', no quotes:"
+	if [[ $sc_only -eq 0 ]]; then
+		echo -e "[!] Enter quoted, multi-line shellcode (sans variable, '=', etc)."
+		echo -e "[!] Heredoc-stye. Stop input with line having only 'EOF', no quotes:"
+	fi
 	while [[ "$temp" != "EOF" ]];
 	do
 		read -r temp
