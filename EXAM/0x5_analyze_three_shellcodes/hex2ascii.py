@@ -53,7 +53,6 @@ def main():
 		if sys.argv[1] == '-l':
 			data = grab_input()
 	else:
-		print("Wjhat the fuck")
 		help()
 	converter(data)	
 
