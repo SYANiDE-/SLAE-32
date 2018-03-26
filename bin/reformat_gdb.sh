@@ -34,8 +34,7 @@ done
 
 if [[ $# -ge 1 ]]; then echo -e "$helptxt"; exit 1; fi
 if [[ $sc_only -ne 1 ]]; then 
-	echo -e "[!] Enter multiline objdump opcode output (-d) here."
-	echo -e "[!]  (objdump -M intel -d file.elf |cut -d \$'\\\\t' -f 2) "
+	echo -e "[!] Enter multiline GDB output here."
 	echo -e "[!] Heredoc-stye. Stop input with line having only 'EOF', no quotes:"
 fi
 while [[ "$temp" != "EOF" ]];
