@@ -1,0 +1,33 @@
+define hook-stop
+print/x $eax
+print/x $ebx
+print/x $ecx
+print/x $edx
+print/x $esi
+print/x $edi
+print $eflags
+x/12xw $esp
+disassemble $eip,+10
+end
+break main
+run "$SHELLCODE1"
+n
+n
+n
+n
+n
+#stepi
+#stepi
+#stepi
+#stepi
+#stepi
+#stepi
+#stepi
+#stepi
+# break *0x0804a059 if $ecx==0x01
+# break *0x0804a063
+# break *0x0804a079 if $ecx==0x01  # segfault
+# break *0x0804a07d
+break *0x0804a09e-2
+step
+
