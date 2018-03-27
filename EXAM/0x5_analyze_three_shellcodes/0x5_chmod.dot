@@ -1,0 +1,20 @@
+digraph G {
+	//rankdir=LR
+	node [fontname=Courier, labeljust=r];
+	 "0x9b11dd0" [shape=box, label = "0x00417000 BB43308986                      mov ebx,0x86893043\l0x00417005 DAD5                            fcmovbe st(0),st(5)\l0x00417007 D97424F4                        fstenv [esp-0xc]\l0x0041700b 5F                              pop edi\l0x0041700c 2BC9                            sub ecx,ecx\l0x0041700e B109                            mov cl,0x9\l"]
+	 "0x9b11468" [shape=box, label = "0x00417010 315F12                          xor [edi+0x12],ebx\l"]
+	 "0x9b11128" [shape=box, label = "0x00417013 035F12                          add ebx,[edi+0x12]\l0x00417016 83EFFC                          sub edi,0xfffffffc\l"]
+	 "0x9b10b78" [shape=box, label = "0x00417019 E2                              loop 0x1\l"]
+	 "0x9b10838" [shape=box, label = "0x0041701b 99                              cwd \l0x0041701c 6A0F                            push byte 0xf\l0x0041701e 58                              pop eax\l0x0041701f 52                              push edx\l0x00417020 E8                              call 0x1\l0x0041702d 5B                              pop ebx\l0x0041702e 68ED090000                      push dword 0x9ed\l0x00417033 59                              pop ecx\l"]
+	 "0x9b101f0" [shape=box, style=filled, color=".7 .3 1.0", label = "0x00417034 chmod\l"]
+	 "0x9b0fba8" [shape=box, label = "0x00417036 6A01                            push byte 0x1\l0x00417038 58                              pop eax\l"]
+	 "0x9b0f6f0" [shape=box, style=filled, color=".7 .3 1.0", label = "0x00417039 exit\l"]
+	 "0x9b11dd0" -> "0x9b11468" [style = bold ]
+	 "0x9b11468" -> "0x9b11128" [style = bold, color=orange ]
+	 "0x9b11128" -> "0x9b10b78" [style = bold, color=orange ]
+	 "0x9b10b78" -> "0x9b11468" [style = bold, color=orange ]
+	 "0x9b10b78" -> "0x9b10838" [style = bold ]
+	 "0x9b10838" -> "0x9b101f0" [style = bold ]
+	 "0x9b101f0" -> "0x9b0fba8" [style = bold ]
+	 "0x9b0fba8" -> "0x9b0f6f0" [style = bold ]
+}
