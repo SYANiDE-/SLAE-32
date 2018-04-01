@@ -14,10 +14,12 @@ Reformats multi-line shellcode, painlessly, heredoc-style or piped inputs.
 
 Opts:
 	-o	Output shellcode-only
+	-c	PASTED [non-piped] input is C lang format
 	-h	Help
 	--help	Help
 """
 sc_only=0
+c_format=0
 
 while [[ $# -gt 0 ]];
 do
@@ -25,6 +27,7 @@ do
 	shift;
 	case "$opt" in
 		'-o') sc_only=1;;
+		'-c') c_format=1;;
 		'-h'|'--help') echo "$helptext"; exit 1;;
 esac
 done
@@ -53,18 +56,42 @@ else
 		read -r temp
 		the_array+=("$temp")
 	done
+	
+	# the below will account for PASTED bytecode in C-style markup #
+	if [[ $c_format -eq 1 ]]; then
+		declare -a xfer
+		multiline_comment_opened=0
+		the_array=("${the_array[@]/\/\*[^\*\/]*\*\// }")
+		for item in "${the_array[@]}"; do
+			item=($(echo $item |\
+				 sed -re "s/[ ]+\/\///g" \
+				-e "s/^\/\/.*//g"))
+			if [[ "$item" =~ "/*" ]]; then multiline_comment_opened=1; fi
+			if [[ "$item" =~ "*/" ]]; then multiline_comment_opened=0; fi
+			if [[ "$item" =~ '"' ]] && [[ "$multiline_comment_opened" -eq 0 ]]; then
+				xfer+=($(echo "$item" |\
+					cut -d '"' -f 2 |\
+					cut -d '"' -f 1))
+			fi
+		done
+		shellcode="$(echo ${xfer[@]} |\
+			 tr -d '\n' |\
+			sed -e 's/\ //g')"
+	fi
+	# the above will account for PASTED bytecode in C-style markup #
 fi
 
-
-shellcode=$(echo "${the_array[@]}" |\
-		tr -d '\n' |\
+if [[ c_format -eq 0 ]]; then
+	shellcode=$(echo "${the_array[@]}" | tr -d '\n' |\
 		sed -e 's/EOF//g' \
 		-e 's/\bunsigned\b//g' \
 		-e 's/\bchar\b//g' \
 		-e 's/\bbuf\b//g' \
+		-e 's/\/\*.*\*\///g' \
 		-e 's/\[\]//g' \
 		-e 's/["; =*]//g' \
 		-e "s/[']//g")
+fi
 
 if [[ $took_pipe -eq 1 ]]; then
 	tmp="$(echo $shellcode |sed 's/x/\\x/g')"
@@ -82,3 +109,4 @@ else
 	echo -e "  # $bytecount bytes"
 	echo -e "###"
 fi
+
