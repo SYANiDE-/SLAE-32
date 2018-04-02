@@ -6,8 +6,11 @@
 
 temp=''
 declare -a the_array
+declare -a xfer
 bytecount=0
 took_pipe=0
+shellcode=""
+preamble="\\x"
 helptext="""\
 Reformats multi-line shellcode, painlessly, heredoc-style or piped inputs.
 [!] USAGE: $0 [-o|-h|--help]
@@ -15,11 +18,15 @@ Reformats multi-line shellcode, painlessly, heredoc-style or piped inputs.
 Opts:
 	-o	Output shellcode-only
 	-c	PASTED [non-piped] input is C lang format
+	-n	PASTED [non-piped] input is ndisasm format
 	-h	Help
 	--help	Help
 """
 sc_only=0
 c_format=0
+ndisasm_format=0
+
+
 
 while [[ $# -gt 0 ]];
 do
@@ -28,6 +35,7 @@ do
 	case "$opt" in
 		'-o') sc_only=1;;
 		'-c') c_format=1;;
+		'-n') ndisasm_format=1;;
 		'-h'|'--help') echo "$helptext"; exit 1;;
 esac
 done
@@ -59,7 +67,6 @@ else
 	
 	# the below will account for PASTED bytecode in C-style markup #
 	if [[ $c_format -eq 1 ]]; then
-		declare -a xfer
 		multiline_comment_opened=0
 		the_array=("${the_array[@]/\/\*[^\*\/]*\*\// }")
 		for item in "${the_array[@]}"; do
@@ -79,9 +86,34 @@ else
 			sed -e 's/\ //g')"
 	fi
 	# the above will account for PASTED bytecode in C-style markup #
+
+	# the below will account for PASTED bytecode in ndisasm markup #
+	if [[ $ndisasm_format -eq 1 ]]; then
+		for item in "${the_array[@]}"; do
+			if ! [[ -z $(echo $item |grep -E "[0-9a-fA-F]{8}") ]]; then
+				xfer+=($(echo "$item" |\
+					sed -re 's/[ ]{2}/^/' |\
+					cut -d '^' -f 2 |\
+					sed -re 's/[ ]+.*$//g'))
+			fi
+		done
+		echo "Total array length: ${#xfer[@]}"
+		sc="$(echo ${xfer[@]} |tr -d '\n' |sed -re 's/[ ]+//g')"
+		sc_len="${#sc}"
+		echo "SC_LEN = $sc_len"
+		echo "$sc"
+		i=0
+		while [[ $i -lt $sc_len ]]; do
+			shellcode="$shellcode$preamble${sc:0:2}"
+			sc="${sc:2}"
+			let i=(i+2)
+		done
+	fi
+	# the above will account for PASTED bytecode in ndisasm markup #
+
 fi
 
-if [[ c_format -eq 0 ]]; then
+if [[ $c_format -eq 0 ]] && [[ $ndisasm_format -eq 0 ]]; then
 	shellcode=$(echo "${the_array[@]}" | tr -d '\n' |\
 		sed -e 's/EOF//g' \
 		-e 's/\bunsigned\b//g' \
