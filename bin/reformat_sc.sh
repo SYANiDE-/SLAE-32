@@ -97,11 +97,13 @@ else
 					sed -re 's/[ ]+.*$//g'))
 			fi
 		done
-		echo "Total array length: ${#xfer[@]}"
 		sc="$(echo ${xfer[@]} |tr -d '\n' |sed -re 's/[ ]+//g')"
 		sc_len="${#sc}"
-		echo "SC_LEN = $sc_len"
-		echo "$sc"
+		if [[ $sc_only -eq 0 ]]; then
+			echo "Total array length: ${#xfer[@]}"
+			echo "SC_LEN = $sc_len"
+			echo "$sc"
+		fi
 		i=0
 		while [[ $i -lt $sc_len ]]; do
 			shellcode="$shellcode$preamble${sc:0:2}"
