@@ -13,7 +13,7 @@ shellcode=""
 preamble="\\x"
 helptext="""\
 Reformats multi-line shellcode, painlessly, heredoc-style or piped inputs.
-[!] USAGE: $0 [-o|-h|--help]
+[!] USAGE: $0 [-o|-c|-n|-h|--help]
 
 Opts:
 	-o	Output shellcode-only
@@ -25,7 +25,6 @@ Opts:
 sc_only=0
 c_format=0
 ndisasm_format=0
-
 
 
 while [[ $# -gt 0 ]];
