@@ -1,0 +1,18 @@
+define hook-stop
+print/x $eax
+print/x $ebx
+print/x $ecx
+print/x $edx
+print/x $edi
+print/x $esi
+print $eflags
+x/24xw $esp
+disassemble $eip,+10
+end
+break main
+run "$SHELLCODE"
+n
+n
+n
+n
+n

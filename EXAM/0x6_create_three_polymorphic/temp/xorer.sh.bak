@@ -1,0 +1,59 @@
+#!/bin/bash
+
+
+in_encoder="\x11\x12\x13\x14\x15\x16\x17\x18"
+in_encoder="${in_encoder//\\x/}"
+out_encoder=""
+
+
+shellcode="\x89\xC0\x89\xDB\x89\xC9\x89\xD2"
+echo "ORIGINAL SC:     \"$shellcode\""
+shellcode="${shellcode//\\x/}"
+
+bytes_len=16
+
+# little-endianize encoder bytes
+while [[ $bytes_len -gt 0 ]]
+do
+	let start_byte=$(( bytes_len-2 ))
+	out_encoder+=${in_encoder:$start_byte:$bytes_len}
+	in_encoder="${in_encoder:0:$start_byte}"
+	bytes_len=${#in_encoder}
+done	
+echo "OUT encoder LE:  0x$out_encoder"
+
+out_encoder="0x$out_encoder"
+bytes_len=${#shellcode}
+encoded=""
+
+# opcode encode
+while [[ $bytes_len -gt 0 ]]
+do
+	start_byte=0
+	end_byte=16
+	target_bytes="0x${shellcode:$start_byte:$end_byte}"
+	temp=$(echo $(( out_encoder ^ target_bytes )) |\
+		 echo "ibase=10; obase=16; $(cat -)" |bc)
+	encoded+=${temp//-/}
+	shellcode="${shellcode:16:${#shellcode}}"
+	bytes_len=${#shellcode}
+done
+echo "ENCODED bytes:   $encoded"
+
+
+bytes_len=${#encoded}
+sc_final=""
+
+# hexify
+while [[ $bytes_len -gt 0 ]]
+do
+	start_byte=0
+	end_byte=2
+	sc_final+="\\x${encoded:$start_byte:$end_byte}"
+	encoded="${encoded:2:${#encoded}}"
+	bytes_len=${#encoded}
+done
+
+echo "HEXIFIED BYTES:  \"$sc_final\""
+echo -e "\n[#] converting to equivalent opcodes and instructions [#]"
+echo -ne "$sc_final" |ndisasm -u -
